@@ -12,7 +12,7 @@
 
 class FrameSender {
 public:
-    FrameSender(ConcurrentDeque<cv::Mat> & cDeque, std::atomic_ulong & counter, int order, int totalThreads);
+    FrameSender(ConcurrentDeque<cv::Mat> & cDeque, std::atomic_ulong & counter, int fdPipe, int order, int totalThreads);
     void start();
     //void threadCycle(ConcurrentDeque<cv::Mat> & cDeque, std::atomic_ulong & counter, int order, int totalThreads);
     void wait();
@@ -24,6 +24,7 @@ private:
 
     ConcurrentDeque<cv::Mat> & concurrentDeque;
     std::atomic_ulong & counter;
+    int fdPipe;
     int order;
     int totalThreads;
     std::thread  * thread;
