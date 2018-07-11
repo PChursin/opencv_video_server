@@ -9,8 +9,8 @@ class ConcurrentDeque
 {
 public:
     ConcurrentDeque() { };
-    T & pop_front();
-    T & pop_back();
+
+    T *pop_front();
     void push_back(const T& value);
     void push_back(T&& value);
     bool empty();
