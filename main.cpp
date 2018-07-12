@@ -2,9 +2,12 @@
 #include <atomic>
 #include "FrameSender.h"
 #include <sys/stat.h>
+#include <zconf.h>
 
 #define THREADS_NUM 2
 #define FIFO_NAME "/tmp/mkfifo_opencv"
+#define MAX_FRAME_QUEUE 30
+#define SLEEP_TIME_USEC 500000
 
 using namespace cv;
 
@@ -55,6 +58,12 @@ int main(int argc, char **argv)
     ulong frameLimit = argc == 3 ? atol(argv[2]) : (ulong) -1;
     ulong localCounter = 0;
     while (true) {
+        //try to limit frames in deque
+        if (cDeque.size() > MAX_FRAME_QUEUE) {
+            //std::cout << "main sleeps" << std::endl;
+            usleep(SLEEP_TIME_USEC);
+            continue;
+        }
         Mat frame;
         cap >> frame;
         if (frame.empty() || localCounter++ > frameLimit) {
@@ -62,7 +71,8 @@ int main(int argc, char **argv)
                 cDeque.push_back(Mat());
             break;
         }
-        cDeque.push_back(frame);
+        cDeque.push_back(frame.clone());
+        frame.release();
     }
     oddWriter.wait();
     evenWriter.wait();

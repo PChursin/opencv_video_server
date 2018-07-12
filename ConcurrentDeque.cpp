@@ -34,4 +34,13 @@ bool ConcurrentDeque<T>::empty() {
     return res;
 }
 
+template<class T>
+unsigned long ConcurrentDeque<T>::size()
+{
+    guard.lock();
+    ulong res = deque.size();
+    guard.unlock();
+    return res;
+}
+
 template class ConcurrentDeque<cv::Mat>;

@@ -18,9 +18,11 @@ void threadCycle(ConcurrentDeque<cv::Mat> &cDeque, std::atomic_ulong &counter, s
             sendMat(frame, pipe);
             counter++;
             if (frame->empty()) {
+                frame->release();
                 delete frame;
                 break;
             }
+            frame->release();
             delete frame;
         } else
             std::this_thread::sleep_for(sleepTime);
